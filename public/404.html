@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/Oto50/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>音50 - Japanese Sounds</title>
+    <script>
+      // Redirect to index.html with the path as a query parameter for client-side routing
+      const pathSegmentsToKeep = 1; // For GitHub Pages with custom domain, use 0
+      const location = window.location;
+      location.replace(
+        location.protocol + '//' + location.hostname + 
+        (location.port ? ':' + location.port : '') +
+        location.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + 
+        '/?/' + 
+        location.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (location.search ? '&' + location.search.slice(1).replace(/&/g, '~and~') : '') +
+        location.hash
+      );
+    </script>
+  </head>
+  <body>
+    <!-- GitHub Pages 404 redirect handler for SPA -->
+  </body>
+</html>
