@@ -1,20 +1,32 @@
 import { useState } from 'react';
-import { kanaData, getKanaByType, getAllKana } from '../data/kanaData';
+import { kanaData, getGojuonChart } from '../data/kanaData';
 import { useJapaneseAudio } from '../hooks/useJapaneseAudio';
 
 const Dictionary = () => {
-  const [selectedType, setSelectedType] = useState('すべて');
+  const [selectedType, setSelectedType] = useState('清音');
   const [searchTerm, setSearchTerm] = useState('');
   
   const { speak, isSupported } = useJapaneseAudio();
 
-  const currentKanaList = selectedType === 'すべて' ? getAllKana() : getKanaByType(selectedType);
+  const chartData = getGojuonChart(selectedType);
   
-  const filteredKana = currentKanaList.filter(kana =>
-    kana.romaji.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    kana.hiragana.includes(searchTerm) ||
-    kana.katakana.includes(searchTerm)
-  );
+  // Filter chart data based on search term
+  const filteredChartData = {
+    ...chartData,
+    rows: chartData.rows.map(row => ({
+      ...row,
+      cells: row.cells.map(kana => {
+        if (!kana) return null;
+        
+        const matchesSearch = searchTerm === '' ||
+          kana.romaji.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          kana.hiragana.includes(searchTerm) ||
+          kana.katakana.includes(searchTerm);
+        
+        return matchesSearch ? kana : null;
+      })
+    })).filter(row => row.cells.some(cell => cell !== null))
+  };
 
   const playKanaAudio = (kana) => {
     if (isSupported()) {
@@ -56,12 +68,6 @@ const Dictionary = () => {
         {/* Type Selection */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button
-              className={selectedType === 'すべて' ? 'btn btn-primary' : 'btn btn-secondary'}
-              onClick={() => setSelectedType('すべて')}
-            >
-              すべて ({getAllKana().length})
-            </button>
             {Object.keys(kanaData).map(type => (
               <button
                 key={type}
@@ -75,65 +81,55 @@ const Dictionary = () => {
         </div>
       </div>
 
-      {/* Kana Grid */}
+      {/* Gojūon Chart */}
       <div className="card">
         <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>
-          {selectedType} ({filteredKana.length}文字)
+          {selectedType} - 五十音表
         </h3>
         
-        {filteredKana.length === 0 ? (
+        {filteredChartData.rows.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#666', padding: '40px' }}>
             見つかりません
           </div>
         ) : (
-          <div className="dictionary-grid">
-            {filteredKana.map((kana, index) => (
-              <div
-                key={`${kana.romaji}-${index}`}
-                style={{
-                  background: '#f8f9fa',
-                  border: '1px solid #e9ecef',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  transition: 'all 0.2s ease',
-                  cursor: 'pointer',
-                  position: 'relative'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-                onClick={() => playKanaAudio(kana)}
-              >
-                {isSupported() && (
-                  <div style={{ 
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    fontSize: '0.8rem'
-                  }}>
-                    🔊
-                  </div>
-                )}
-                
-                <div className="hiragana" style={{ fontSize: '2rem', marginBottom: '8px' }}>
-                  {kana.hiragana}
-                </div>
-                
-                <div className="katakana" style={{ fontSize: '1.5rem', marginBottom: '8px', color: '#666' }}>
-                  {kana.katakana}
-                </div>
-                
-                <div className="romaji" style={{ fontSize: '1rem', color: '#007bff', fontWeight: 'bold' }}>
-                  {kana.romaji}
-                </div>
-              </div>
-            ))}
+          <div className="gojuon-chart">
+            <table className="gojuon-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  {chartData.headers.map((header, index) => (
+                    <th key={index}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredChartData.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    <td className="row-header">{row.name}</td>
+                    {row.cells.map((kana, cellIndex) => (
+                      <td key={cellIndex} className="kana-cell">
+                        {kana ? (
+                          <div
+                            className="kana-item"
+                            onClick={() => playKanaAudio(kana)}
+                          >
+                            {isSupported() && (
+                              <div className="audio-indicator">🔊</div>
+                            )}
+                            
+                            <div className="hiragana">{kana.hiragana}</div>
+                            <div className="katakana">{kana.katakana}</div>
+                            <div className="romaji">{kana.romaji}</div>
+                          </div>
+                        ) : (
+                          <div className="empty-cell"></div>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
