@@ -20,6 +20,9 @@ const Navigation = () => {
           <Link to="/dictionary" className={isActive('/dictionary')}>
             辞書
           </Link>
+          <Link to="/writing" className={isActive('/writing')}>
+            書き方
+          </Link>
           <Link to="/errors" className={isActive('/errors')}>
             復習
           </Link>

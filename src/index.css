@@ -420,3 +420,130 @@ body {
     font-size: 1.5rem;
   }
 }
+
+/* Writing Animation Styles */
+.writing-animation-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.animation-header {
+  text-align: center;
+}
+
+.animation-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.gif-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.kana-gif {
+  max-width: 100%;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.no-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.kana-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.script-toggle {
+  display: flex;
+  gap: 12px;
+}
+
+.script-toggle .btn {
+  min-width: 120px;
+  min-height: 50px;
+  font-size: 1.1rem;
+}
+
+.kana-details {
+  text-align: center;
+}
+
+.kana-display-large {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.kana-item.selected {
+  background-color: #007bff !important;
+  color: white !important;
+  transform: scale(1.05);
+}
+
+.kana-item.selected .romaji {
+  color: #e6f2ff !important;
+}
+
+@media (min-width: 768px) {
+  .animation-content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .gif-container {
+    flex: 1;
+    max-width: 500px;
+    min-height: 400px;
+  }
+  
+  .kana-gif {
+    max-height: 380px;
+  }
+  
+  .kana-info {
+    flex: 1;
+    max-width: 300px;
+    gap: 30px;
+  }
+  
+  .script-toggle .btn {
+    min-width: 140px;
+    min-height: 60px;
+    font-size: 1.2rem;
+  }
+  
+  .no-animation {
+    min-height: 400px;
+    font-size: 1.2rem;
+  }
+}
