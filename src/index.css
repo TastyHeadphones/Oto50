@@ -346,6 +346,23 @@ body {
   line-height: 1;
 }
 
+.gojuon-table .kana-item.selected {
+  background-color: #007bff;
+  color: white;
+  transform: scale(1.05);
+}
+
+.gojuon-table .kana-item.selected .romaji {
+  color: #cce7ff;
+}
+
+.writing-animation-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
 .gojuon-table .empty-cell {
   height: 60px;
   background-color: #f8f9fa;
