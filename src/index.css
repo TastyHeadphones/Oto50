@@ -255,15 +255,15 @@ body {
 
 /* Gojūon chart styles */
 .gojuon-chart {
-  overflow-x: auto;
   padding: 0 8px;
+  width: 100%;
 }
 
 .gojuon-table {
   width: 100%;
   border-collapse: collapse;
   margin: 0 auto;
-  min-width: 600px;
+  table-layout: fixed;
 }
 
 .gojuon-table th,
@@ -276,25 +276,26 @@ body {
 .gojuon-table th {
   background-color: #f8f9fa;
   font-weight: bold;
-  padding: 8px;
-  font-size: 1.2rem;
+  padding: 4px;
+  font-size: 0.9rem;
   color: #495057;
 }
 
 .gojuon-table .row-header {
   background-color: #f8f9fa;
   font-weight: bold;
-  padding: 8px;
-  font-size: 1rem;
+  padding: 4px;
+  font-size: 0.8rem;
   color: #495057;
   white-space: nowrap;
+  width: 15%;
 }
 
 .gojuon-table .kana-cell {
   padding: 0;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: auto;
+  height: 60px;
 }
 
 .gojuon-table .kana-item {
@@ -325,28 +326,28 @@ body {
 }
 
 .gojuon-table .kana-item .hiragana {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   line-height: 1;
 }
 
 .gojuon-table .kana-item .katakana {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: #666;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   line-height: 1;
 }
 
 .gojuon-table .kana-item .romaji {
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   color: #007bff;
   font-weight: bold;
   line-height: 1;
 }
 
 .gojuon-table .empty-cell {
-  height: 80px;
+  height: 60px;
   background-color: #f8f9fa;
 }
 
@@ -357,20 +358,33 @@ body {
   }
 
   .gojuon-table .kana-cell {
-    width: 90px;
-    height: 90px;
+    height: 70px;
+  }
+  
+  .gojuon-table .row-header {
+    font-size: 0.9rem;
+    padding: 6px;
+  }
+  
+  .gojuon-table th {
+    font-size: 1rem;
+    padding: 6px;
   }
 
   .gojuon-table .kana-item .hiragana {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
   }
 
   .gojuon-table .kana-item .katakana {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
   }
 
   .gojuon-table .kana-item .romaji {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+  }
+  
+  .gojuon-table .empty-cell {
+    height: 70px;
   }
 }
 
@@ -385,25 +399,34 @@ body {
     gap: 16px;
   }
 
-  .gojuon-table {
-    min-width: 700px;
-  }
-
   .gojuon-table .kana-cell {
-    width: 100px;
-    height: 100px;
+    height: 90px;
+  }
+  
+  .gojuon-table .row-header {
+    font-size: 1rem;
+    padding: 8px;
+  }
+  
+  .gojuon-table th {
+    font-size: 1.2rem;
+    padding: 8px;
   }
 
   .gojuon-table .kana-item .hiragana {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .gojuon-table .kana-item .katakana {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   .gojuon-table .kana-item .romaji {
-    font-size: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .gojuon-table .empty-cell {
+    height: 90px;
   }
   
   .hiragana, .katakana {
