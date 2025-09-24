@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { kanaData, getKanaByType } from '../data/kanaData';
+import { kanaData, getKanaByType, getAllKana } from '../data/kanaData';
 import { useJapaneseAudio } from '../hooks/useJapaneseAudio';
 
 const Dictionary = () => {
-  const [selectedType, setSelectedType] = useState('清音');
+  const [selectedType, setSelectedType] = useState('すべて');
   const [searchTerm, setSearchTerm] = useState('');
   
   const { speak, isSupported } = useJapaneseAudio();
 
-  const currentKanaList = getKanaByType(selectedType);
+  const currentKanaList = selectedType === 'すべて' ? getAllKana() : getKanaByType(selectedType);
   
   const filteredKana = currentKanaList.filter(kana =>
     kana.romaji.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -56,6 +56,12 @@ const Dictionary = () => {
         {/* Type Selection */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              className={selectedType === 'すべて' ? 'btn btn-primary' : 'btn btn-secondary'}
+              onClick={() => setSelectedType('すべて')}
+            >
+              すべて ({getAllKana().length})
+            </button>
             {Object.keys(kanaData).map(type => (
               <button
                 key={type}
@@ -80,12 +86,7 @@ const Dictionary = () => {
             見つかりません
           </div>
         ) : (
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-            gap: '16px',
-            padding: '0'
-          }}>
+          <div className="dictionary-grid">
             {filteredKana.map((kana, index) => (
               <div
                 key={`${kana.romaji}-${index}`}
