@@ -184,3 +184,76 @@ export const getRandomKana = (types = ['清音', '濁音', '拗音']) => {
   const randomIndex = Math.floor(Math.random() * selectedKana.length);
   return selectedKana[randomIndex];
 };
+
+// Gojūon chart structure for proper layout
+export const getGojuonChart = (type) => {
+  const data = kanaData[type] || [];
+  
+  // Define gojūon structure
+  const gojuonStructure = {
+    清音: {
+      rows: [
+        { name: 'あ行', consonant: '', vowels: ['a', 'i', 'u', 'e', 'o'] },
+        { name: 'か行', consonant: 'k', vowels: ['ka', 'ki', 'ku', 'ke', 'ko'] },
+        { name: 'さ行', consonant: 's', vowels: ['sa', 'shi', 'su', 'se', 'so'] },
+        { name: 'た行', consonant: 't', vowels: ['ta', 'chi', 'tsu', 'te', 'to'] },
+        { name: 'な行', consonant: 'n', vowels: ['na', 'ni', 'nu', 'ne', 'no'] },
+        { name: 'は行', consonant: 'h', vowels: ['ha', 'hi', 'fu', 'he', 'ho'] },
+        { name: 'ま行', consonant: 'm', vowels: ['ma', 'mi', 'mu', 'me', 'mo'] },
+        { name: 'や行', consonant: 'y', vowels: ['ya', '', 'yu', '', 'yo'] },
+        { name: 'ら行', consonant: 'r', vowels: ['ra', 'ri', 'ru', 're', 'ro'] },
+        { name: 'わ行', consonant: 'w', vowels: ['wa', '', '', '', 'wo'] },
+        { name: 'ん', consonant: '', vowels: ['n', '', '', '', ''] }
+      ]
+    },
+    濁音: {
+      rows: [
+        { name: 'が行', consonant: 'g', vowels: ['ga', 'gi', 'gu', 'ge', 'go'] },
+        { name: 'ざ行', consonant: 'z', vowels: ['za', 'ji', 'zu', 'ze', 'zo'] },
+        { name: 'だ行', consonant: 'd', vowels: ['da', 'di', 'du', 'de', 'do'] },
+        { name: 'ば行', consonant: 'b', vowels: ['ba', 'bi', 'bu', 'be', 'bo'] },
+        { name: 'ぱ行', consonant: 'p', vowels: ['pa', 'pi', 'pu', 'pe', 'po'] }
+      ]
+    },
+    拗音: {
+      rows: [
+        { name: 'きゃ行', consonant: 'ky', vowels: ['kya', 'kyu', 'kyo'] },
+        { name: 'しゃ行', consonant: 'sh', vowels: ['sha', 'shu', 'sho'] },
+        { name: 'ちゃ行', consonant: 'ch', vowels: ['cha', 'chu', 'cho'] },
+        { name: 'にゃ行', consonant: 'ny', vowels: ['nya', 'nyu', 'nyo'] },
+        { name: 'ひゃ行', consonant: 'hy', vowels: ['hya', 'hyu', 'hyo'] },
+        { name: 'みゃ行', consonant: 'my', vowels: ['mya', 'myu', 'myo'] },
+        { name: 'りゃ行', consonant: 'ry', vowels: ['rya', 'ryu', 'ryo'] },
+        { name: 'ぎゃ行', consonant: 'gy', vowels: ['gya', 'gyu', 'gyo'] },
+        { name: 'じゃ行', consonant: 'j', vowels: ['ja', 'ju', 'jo'] },
+        { name: 'びゃ行', consonant: 'by', vowels: ['bya', 'byu', 'byo'] },
+        { name: 'ぴゃ行', consonant: 'py', vowels: ['pya', 'pyu', 'pyo'] }
+      ]
+    }
+  };
+  
+  const structure = gojuonStructure[type];
+  if (!structure) return { rows: [], headers: [] };
+  
+  // Create lookup map for kana data
+  const kanaMap = {};
+  data.forEach(kana => {
+    kanaMap[kana.romaji] = kana;
+  });
+  
+  // Build chart data
+  const chart = structure.rows.map(row => ({
+    name: row.name,
+    cells: row.vowels.map(romaji => romaji ? kanaMap[romaji] || null : null)
+  }));
+  
+  // Headers depend on type
+  let headers;
+  if (type === '拗音') {
+    headers = ['や', 'ゆ', 'よ'];
+  } else {
+    headers = ['あ', 'い', 'う', 'え', 'お'];
+  }
+  
+  return { rows: chart, headers };
+};
