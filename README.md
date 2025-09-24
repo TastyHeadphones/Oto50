@@ -34,6 +34,25 @@ npm run build
 npm run preview
 ```
 
+## 🌐 Live Demo
+
+The application is automatically deployed to GitHub Pages via GitHub Actions:
+
+**🔗 [https://tastyheadphones.github.io/Oto50/](https://tastyheadphones.github.io/Oto50/)**
+
+### 🚀 Deployment
+
+This project is configured for automatic deployment to GitHub Pages. Every push to the `main` branch triggers a GitHub Actions workflow that:
+
+1. **Builds the project** using Vite with the correct base path for GitHub Pages
+2. **Runs linting** to ensure code quality
+3. **Deploys to GitHub Pages** automatically
+
+The deployment includes:
+- ✅ **SPA Routing Support**: 404.html fallback for client-side routing
+- ✅ **Optimized Assets**: All CSS/JS assets are properly built and cached
+- ✅ **Mobile-First**: Responsive design works perfectly on GitHub Pages
+
 ## 🏗️ Project Structure
 
 ```
@@ -103,6 +122,8 @@ src/
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+
+**Note**: When your PR is merged into the `main` branch, the changes will be automatically deployed to GitHub Pages within a few minutes thanks to the GitHub Actions workflow.
 
 ## 📄 License
 
