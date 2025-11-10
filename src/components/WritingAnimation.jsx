@@ -1,32 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { kanaData, getGojuonChart } from '../data/kanaData';
+import { getAnimationUrl } from '../utils/kanaAnimations';
 
 const WritingAnimation = () => {
   const [selectedType, setSelectedType] = useState('清音');
-  const [kanaType, setKanaType] = useState('hiragana'); // 'hiragana' or 'katakana'
+  const [kanaType, setKanaType] = useState('hiragana');
   const [selectedKana, setSelectedKana] = useState(null);
 
-  const chartData = getGojuonChart(selectedType);
+  const chartData = useMemo(() => getGojuonChart(selectedType), [selectedType]);
 
-  // Filter chart data to only show kana that have GIFs available
-  const filteredChartData = {
+  const availableKanaList = useMemo(() => {
+    const list = kanaData[selectedType] || [];
+    return list.filter(kana => getAnimationUrl(kanaType, kana.romaji));
+  }, [kanaType, selectedType]);
+
+  useEffect(() => {
+    if (availableKanaList.length === 0) {
+      setSelectedKana(null);
+      return;
+    }
+
+    const currentHasAnimation = selectedKana && getAnimationUrl(kanaType, selectedKana.romaji);
+    if (!currentHasAnimation) {
+      setSelectedKana(availableKanaList[0]);
+    }
+  }, [availableKanaList, kanaType, selectedKana]);
+
+  const filteredChartData = useMemo(() => ({
     ...chartData,
     rows: chartData.rows.map(row => ({
       ...row,
       cells: row.cells.map(kana => {
         if (!kana) return null;
-        // Check if GIF exists for this kana
-        return kana;
+        return getAnimationUrl(kanaType, kana.romaji) ? kana : null;
       })
     }))
-  };
-
-  const getGifPath = (romaji, type) => {
-    const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
-    return new URL(`../images/${type}/${capitalizedType}_${romaji}.gif`, import.meta.url).href;
-  };
+  }), [chartData, kanaType]);
 
   const handleKanaClick = (kana) => {
+    if (!getAnimationUrl(kanaType, kana.romaji)) {
+      return;
+    }
     setSelectedKana(kana);
   };
 
@@ -34,9 +48,10 @@ const WritingAnimation = () => {
     return type === 'hiragana' ? '平假名' : '片假名';
   };
 
+  const selectedAnimationUrl = selectedKana ? getAnimationUrl(kanaType, selectedKana.romaji) : null;
+
   return (
     <div className="container">
-      {/* Title */}
       <div className="card">
         <h2 style={{ textAlign: 'center', marginBottom: '16px' }}>書き順練習</h2>
         <p style={{ textAlign: 'center', color: '#666', fontSize: '0.9rem' }}>
@@ -44,7 +59,6 @@ const WritingAnimation = () => {
         </p>
       </div>
 
-      {/* Kana Type Selection */}
       <div className="card">
         <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>文字種類</h3>
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
@@ -69,7 +83,6 @@ const WritingAnimation = () => {
         </div>
       </div>
 
-      {/* Type Selection */}
       <div className="card">
         <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>音の種類</h3>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -88,62 +101,70 @@ const WritingAnimation = () => {
         </div>
       </div>
 
-      {/* Animation Display */}
-      {selectedKana && (
-        <div className="card">
-          <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>
-            {getKanaTypeLabel(kanaType)} - {selectedKana.romaji}
-          </h3>
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#333', marginBottom: '8px' }}>
-              {kanaType === 'hiragana' ? selectedKana.hiragana : selectedKana.katakana}
+      <div className="card">
+        <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>
+          {getKanaTypeLabel(kanaType)} プロモーションビュー
+        </h3>
+        {selectedAnimationUrl && selectedKana ? (
+          <div className="selected-animation">
+            <div className="selected-animation-preview">
+              <img
+                src={selectedAnimationUrl}
+                alt={`${getKanaTypeLabel(kanaType)} ${selectedKana.romaji} 書き順`}
+              />
             </div>
-            <div style={{ fontSize: '1.2rem', color: '#007bff', fontWeight: 'bold' }}>
-              {selectedKana.romaji}
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-            <img
-              src={getGifPath(selectedKana.romaji, kanaType)}
-              alt={`${getKanaTypeLabel(kanaType)} ${selectedKana.romaji} 書き順`}
-              style={{
-                maxWidth: '300px',
-                maxHeight: '300px',
-                width: '100%',
-                height: 'auto',
-                border: '2px solid #e9ecef',
-                borderRadius: '8px',
-                background: '#f8f9fa'
-              }}
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'block';
-              }}
-            />
-            <div 
-              style={{
-                display: 'none',
-                padding: '40px',
-                textAlign: 'center',
-                color: '#666',
-                border: '2px dashed #dee2e6',
-                borderRadius: '8px',
-                maxWidth: '300px',
-                width: '100%'
-              }}
-            >
-              アニメーションが見つかりません
+            <div className="selected-animation-caption">
+              <div className="selected-kana">
+                {kanaType === 'hiragana' ? selectedKana.hiragana : selectedKana.katakana}
+              </div>
+              <div className="selected-romaji">{selectedKana.romaji}</div>
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div style={{ textAlign: 'center', color: '#666', padding: '24px' }}>
+            この種類のアニメーションは準備中です
+          </div>
+        )}
+      </div>
 
-      {/* Gojūon Chart */}
+      <div className="card">
+        <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>アニメーション一覧</h3>
+        {availableKanaList.length === 0 ? (
+          <div style={{ textAlign: 'center', color: '#666', padding: '24px' }}>
+            利用できるアニメーションが見つかりません
+          </div>
+        ) : (
+          <div className="animation-grid">
+            {availableKanaList.map(kana => {
+              const url = getAnimationUrl(kanaType, kana.romaji);
+              return (
+                <button
+                  type="button"
+                  key={`${kanaType}-${kana.romaji}`}
+                  className={`animation-item ${selectedKana?.romaji === kana.romaji ? 'selected' : ''}`}
+                  onClick={() => handleKanaClick(kana)}
+                >
+                  <div className="animation-thumb">
+                    <img src={url} alt={`${kana.romaji} 書き順`} />
+                  </div>
+                  <div className="animation-label">
+                    <span className="animation-kana">
+                      {kanaType === 'hiragana' ? kana.hiragana : kana.katakana}
+                    </span>
+                    <span className="animation-romaji">{kana.romaji}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <div className="card">
         <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>
           {getKanaTypeLabel(kanaType)} {selectedType} - 五十音表
         </h3>
-        
+
         {filteredChartData.rows.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#666', padding: '40px' }}>
             見つかりません
@@ -188,7 +209,6 @@ const WritingAnimation = () => {
         )}
       </div>
 
-      {/* Instructions */}
       <div className="card">
         <h3 style={{ textAlign: 'center', marginBottom: '16px' }}>使い方</h3>
         <div style={{ fontSize: '0.9rem', color: '#666', textAlign: 'center' }}>
